@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="amber_b1">
     <xacro:arg name="prefix" default="" />
-    <xacro:arg name="is_hw" default="1"/>
+    <xacro:arg name="is_hw" default="0"/> <!-- Changed default to 0 for Gazebo -->
     <xacro:arg name="is_ethercat" default="0"/>
 
     <xacro:include filename="$(find amber_l1_description)/urdf/amber_l1_description.urdf.xacro" />
@@ -9,4 +9,27 @@
 
     <xacro:amberl1 prefix="$(arg prefix)"/>
     <xacro:amberl1_ros2_control prefix="$(arg prefix)" is_hw="$(arg is_hw)" is_ethercat="$(arg is_ethercat)"/>
+
+    <!-- Gazebo specific plugins -->
+    <gazebo>
+        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+            <parameters>$(find amber_l1_description)/config/amber_l1_gazebo_controllers.yaml</parameters>
+            <robot_param>robot_description</robot_param>
+            <robot_param_node>robot_state_publisher</robot_param_node>
+        </plugin>
+    </gazebo>
+
+    <gazebo>
+        <plugin name="gazebo_ros_state_publisher" filename="libgazebo_ros_state_publisher.so">
+            <ros>
+                <namespace>/gazebo</namespace>
+            </ros>
+            <update_rate>100</update_rate>
+            <publish_joint_static>true</publish_joint_static>
+            <publish_joint_states>true</publish_joint_states>
+            <publish_tf>true</publish_tf>
+            <publish_link_poses>true</publish_link_poses>
+            <publish_model_pose>true</publish_model_pose>
+        </plugin>
+    </gazebo>
 </robot>

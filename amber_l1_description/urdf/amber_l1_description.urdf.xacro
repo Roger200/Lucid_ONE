@@ -447,5 +447,105 @@
       effort="100"
       velocity="10" />
   </joint>
+
+  <!-- Gripper definitions -->
+  <link name="${prefix}gripper_finger_left_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.015 0.04"/> <!-- width, depth, height -->
+      </geometry>
+      <material name="grey">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.015 0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0.02" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="1.0e-6" ixy="0" ixz="0" iyy="1.0e-6" iyz="0" izz="1.0e-6"/>
+    </inertial>
+  </link>
+
+  <joint name="${prefix}gripper_finger_left_joint" type="prismatic">
+    <parent link="${prefix}seven_Link"/>
+    <child link="${prefix}gripper_finger_left_link"/>
+    <origin xyz="0 0.015 0.02" rpy="0 0 0"/> <!-- Adjusted Y and Z offset slightly -->
+    <axis xyz="0 1 0"/>
+    <limit lower="0.0" upper="0.02" effort="10" velocity="0.1"/>
+    <dynamics damping="0.1" friction="0.1"/>
+  </joint>
+
+  <link name="${prefix}gripper_finger_right_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.015 0.04"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.01 0.015 0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0.02" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="1.0e-6" ixy="0" ixz="0" iyy="1.0e-6" iyz="0" izz="1.0e-6"/>
+    </inertial>
+  </link>
+
+  <joint name="${prefix}gripper_finger_right_joint" type="prismatic">
+    <parent link="${prefix}seven_Link"/>
+    <child link="${prefix}gripper_finger_right_link"/>
+    <origin xyz="0 -0.015 0.02" rpy="0 0 0"/> <!-- Adjusted Y and Z offset slightly -->
+    <axis xyz="0 1 0"/> <!-- Using same axis direction; controller will manage opening/closing -->
+    <limit lower="0.0" upper="0.02" effort="10" velocity="0.1"/>
+    <dynamics damping="0.1" friction="0.1"/>
+  </joint>
+
+  <transmission name="${prefix}gripper_finger_left_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="${prefix}gripper_finger_left_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="${prefix}gripper_finger_left_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="${prefix}gripper_finger_right_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="${prefix}gripper_finger_right_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="${prefix}gripper_finger_right_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <!-- Placeholder for Gazebo-specific physics properties for existing links -->
+  <!-- For example:
+  <gazebo reference="base_link">
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>1.0</maxVel>
+  </gazebo>
+  ... (repeat for other links as needed) ...
+  For now, we assume existing inertial and collision properties are sufficient.
+  -->
+
   </xacro:macro>
 </robot>
